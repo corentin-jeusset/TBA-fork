@@ -52,6 +52,9 @@ class Game:
         swamp.exits = {"N" : tower, "E" : None, "S" : None, "O" : castle}
         castle.exits = {"N" : forest, "E" : swamp, "S" : None, "O" : None}
 
+        syn = {'N':('n','nord','NORD','Nord'),'E':('e','est','EST','Est'),'S':('s','sud','SUD','Sud'),'O':('o','ouest','OUEST','Ouest')}
+        for r in (forest,tower,cave,cottage,swamp,castle): [r.exits.update({s:v for s in (syn.get(k,())+(k.lower(),k.capitalize(),k.upper()))}) for k,v in list(r.exits.items())]
+
         # Setup player and starting room
 
         self.player = Player(input("\nEntrez votre nom: "))

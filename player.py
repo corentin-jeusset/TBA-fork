@@ -45,4 +45,3 @@ class Player():
         print(self.current_room.get_long_description())
         return True
 
-    

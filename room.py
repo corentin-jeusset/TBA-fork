@@ -53,7 +53,7 @@ class Room:
     def get_exit_string(self):
         exit_string = "Sorties: " 
         for exit in self.exits.keys():
-            if self.exits.get(exit) is not None:
+            if exit in ("N", "E", "S", "O") and self.exits.get(exit) is not None:
                 exit_string += exit + ", "
         exit_string = exit_string.strip(", ")
         return exit_string
