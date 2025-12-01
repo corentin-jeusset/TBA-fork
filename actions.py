@@ -53,11 +53,47 @@ class Actions:
             print(MSG1.format(command_word=command_word))
             return False
 
-        # Get the direction from the list of words.
-        direction = list_of_words[1]
-        # Move the player in the direction specified by the parameter.
-        player.move(direction)
-        return True
+        # boucle : accepte soit une direction ('n', 'nord', 'go n'), soit n'importe quelle autre commande
+        exits = player.current_room.exits
+
+        # si la commande initiale contenait déjà un paramètre, on l'utilise d'abord
+        pending = " ".join(list_of_words[1:]) if len(list_of_words) > 1 else None
+
+        while True:
+            was_pending = pending is not None
+            line = pending if was_pending else input("> ").strip()
+            pending = None
+            if not line:
+                continue
+
+            words = line.split()
+            first = words[0].lower()
+
+            if first == "go" and len(words) > 1:
+                candidate = words[1]
+            elif len(words) == 1 and was_pending:
+                candidate = words[0]
+            else:
+                game.process_command(line)
+                if getattr(game, "finished", False):
+                    return False
+                continue
+
+            # normalisation simple des directions
+            cand = candidate.strip().lower()
+            dir_map = {"n": "N", "NORD": "N", "Nord": "N", "nord": "N",
+                       "e": "E", "EST": "E", "Est": "E", "est": "E",
+                       "s": "S", "SUD": "S", "Sud": "S", "sud": "S",
+                       "o": "O", "OUEST": "O", "Ouest": "O", "ouest": "O"}
+            direction = dir_map.get(cand, candidate.upper())
+
+            # vérifier l'existence de la sortie
+            if direction in exits and exits.get(direction) is not None:
+                player.move(direction)
+                return True
+            else:
+                print("\nCette direction n'existe pas. Veuillez en choisir une autre.")
+                print(player.current_room.get_long_description())
 
     def quit(game, list_of_words, number_of_parameters):
         """
